@@ -1,4 +1,4 @@
 MineResetLite
 =============
 
-Lightweight implementation for automatic mine resets, a continuation by VirtualByte.
+Lightweight implementation for automatic mine resets, now managed by Lyonix.
