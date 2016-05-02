@@ -80,6 +80,9 @@ public class MineResetLite extends JavaPlugin {
 		mines = new ArrayList<Mine>();
 		logger = getLogger();
 		
+		Bukkit.getLogger().info("[MineResetLite] MRL is managed and developed by Lyonix Services under the Apache 2.0 license.");
+		Bukkit.getLogger().info("[MineResetLite] For any issues or suggestions, use the Spigot discussion thread. Do not PM Boomclaw or Damadrigames.");
+		
 		if (!setupConfig()) {
 			logger.severe("Since I couldn't setup config files properly, I guess this is goodbye. ");
 			logger.severe("Plugin Loading Aborted!");
@@ -353,12 +356,12 @@ public class MineResetLite extends JavaPlugin {
 				mine.getComposition().put(new SerializableBlock(id), Double.valueOf("0." + percentage));
 			}
 
-			Bukkit.getLogger().info("Converted " + file.getName() + ", deleting file...");
+			Bukkit.getLogger().info("[MineResetLite] Converted " + file.getName() + ", deleting file...");
 			file.delete();
 		}
 
 		Bukkit.getLogger()
-				.info("PrisonMines conversion complete - please remove the folder PrisonMines. Disabling plugin...");
+				.info("[MineResetLite] PrisonMines conversion complete - please remove the folder PrisonMines. Disabling plugin...");
 	}
 
 	private List<File> getFilesInsideFolder(File parentFile) {
