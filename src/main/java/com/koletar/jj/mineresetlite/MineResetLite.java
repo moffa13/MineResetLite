@@ -38,19 +38,19 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
  * @author jjkoletar
  */
 public class MineResetLite extends JavaPlugin {
-	
-	public List<Mine>			mines;
-	private Logger				logger;
-	private CommandManager		commandManager;
-	private WorldEditPlugin		worldEdit	= null;
-	private int					saveTaskId	= -1;
-	private int					resetTaskId	= -1;
-	private BukkitTask			updateTask	= null;
-	private boolean				needsUpdate;
-	private boolean				isUpdateCritical;
-	
-	public static MineResetLite	instance;
-	
+
+	public List<Mine> mines;
+	private Logger logger;
+	private CommandManager commandManager;
+	private WorldEditPlugin worldEdit = null;
+	private int saveTaskId = -1;
+	private int resetTaskId = -1;
+	private BukkitTask updateTask = null;
+	private boolean needsUpdate;
+	private boolean isUpdateCritical;
+
+	public static MineResetLite instance;
+
 	public static void broadcast(String message, Mine mine) {
 		if (Config.getBroadcastNearbyOnly()) {
 			for (Player p : mine.getWorld().getPlayers()) {
@@ -74,16 +74,18 @@ public class MineResetLite extends JavaPlugin {
 			}
 		}
 	}
-	
+
 	public void onEnable() {
 		MineResetLite.instance = this;
 		mines = new ArrayList<Mine>();
 		logger = getLogger();
+		
 		if (!setupConfig()) {
 			logger.severe("Since I couldn't setup config files properly, I guess this is goodbye. ");
 			logger.severe("Plugin Loading Aborted!");
 			return;
 		}
+		
 		commandManager = new CommandManager();
 		commandManager.register(MineCommands.class, new MineCommands(this));
 		commandManager.register(CommandManager.class, commandManager);
@@ -91,6 +93,7 @@ public class MineResetLite extends JavaPlugin {
 		Locale locale = new Locale(Config.getLocale());
 		Phrases.getInstance().initialize(locale);
 		File overrides = new File(getDataFolder(), "phrases.properties");
+		
 		if (overrides.exists()) {
 			Properties overridesProps = new Properties();
 			try {
@@ -100,13 +103,14 @@ public class MineResetLite extends JavaPlugin {
 			}
 			Phrases.getInstance().overrides(overridesProps);
 		}
+		
 		// Look for worldedit
 		if (getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
 			worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
 		}
-		
+
 		ConfigurationSerialization.registerClass(Mine.class);
-		
+
 		// Load mines
 		File[] mineFiles = new File(getDataFolder(), "mines").listFiles(new IsMineFile());
 		for (File file : mineFiles) {
@@ -124,6 +128,7 @@ public class MineResetLite extends JavaPlugin {
 				logger.severe("Unable to load mine!");
 			}
 		}
+		
 		resetTaskId = getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			public void run() {
 				for (Mine mine : mines) {
@@ -131,21 +136,19 @@ public class MineResetLite extends JavaPlugin {
 				}
 			}
 		}, 60 * 20L, 60 * 20L);
-		
+
 		try {
 			Metrics metrics = new Metrics(this);
 			metrics.start();
 		} catch (IOException e) {
 		}
-		
+
 		if (getServer().getPluginManager().getPlugin("PrisonMines") != null) {
 			convertPrisonMines();
 			getServer().getPluginManager().disablePlugin(getServer().getPluginManager().getPlugin("PrisonMines"));
 		}
-		
-		logger.info("MineResetLite version " + getDescription().getVersion() + " enabled!");
 	}
-	
+
 	public void onDisable() {
 		getServer().getScheduler().cancelTask(resetTaskId);
 		getServer().getScheduler().cancelTask(saveTaskId);
@@ -155,10 +158,8 @@ public class MineResetLite extends JavaPlugin {
 		HandlerList.unregisterAll(this);
 		logger.info("MineResetLite disabled");
 	}
-	
+
 	public Material matchMaterial(String name) {
-		// If anyone can think of a more elegant way to serve this function, let
-		// me know. ~jj
 		if (name.equalsIgnoreCase("diamondore")) {
 			return Material.DIAMOND_ORE;
 		} else if (name.equalsIgnoreCase("diamondblock")) {
@@ -183,23 +184,14 @@ public class MineResetLite extends JavaPlugin {
 			return Material.LAPIS_ORE;
 		} else if (name.equalsIgnoreCase("lapisblock")) {
 			return Material.LAPIS_BLOCK;
-		} else if (name.equalsIgnoreCase("snowblock") || name.equalsIgnoreCase("snow")) { // I've
-																							// never
-																							// seen
-																							// a
-																							// mine
-																							// with
-																							// snowFALL
-																							// in
-																							// it.
-			return Material.SNOW_BLOCK; // Maybe I'll be proven wrong, but it
-										// helps 99% of admins.
+		} else if (name.equalsIgnoreCase("snowblock") || name.equalsIgnoreCase("snow")) {
+			return Material.SNOW_BLOCK;
 		} else if (name.equalsIgnoreCase("redstoneore")) {
 			return Material.REDSTONE_ORE;
 		}
 		return Material.matchMaterial(name);
 	}
-	
+
 	public Mine[] matchMines(String in) {
 		List<Mine> matches = new LinkedList<Mine>();
 		for (Mine mine : mines) {
@@ -209,7 +201,7 @@ public class MineResetLite extends JavaPlugin {
 		}
 		return matches.toArray(new Mine[matches.size()]);
 	}
-	
+
 	/**
 	 * Alert the plugin that changes have been made to mines, but wait 60
 	 * seconds before we save. This process saves on disk I/O by waiting until a
@@ -217,19 +209,22 @@ public class MineResetLite extends JavaPlugin {
 	 */
 	public void buffSave() {
 		BukkitScheduler scheduler = getServer().getScheduler();
+		
 		if (saveTaskId != -1) {
 			// Cancel old task
 			scheduler.cancelTask(saveTaskId);
 		}
+		
 		// Schedule save
 		final MineResetLite plugin = this;
+		
 		scheduler.scheduleSyncDelayedTask(this, new Runnable() {
 			public void run() {
 				plugin.save();
 			}
 		}, 60 * 20L);
 	}
-	
+
 	public void save() {
 		for (Mine mine : mines) {
 			File mineFile = getMineFile(mine);
@@ -243,34 +238,34 @@ public class MineResetLite extends JavaPlugin {
 			}
 		}
 	}
-	
+
 	public File getMineFile(Mine mine) {
 		return new File(new File(getDataFolder(), "mines"), mine.getName().replace(" ", "") + ".mine.yml");
 	}
-	
+
 	public void eraseMine(Mine mine) {
 		mines.remove(mine);
 		getMineFile(mine).delete();
 	}
-	
+
 	public Mine getMine(Player player) {
 		for (Mine mine : mines) {
 			if (mine.isInside(player)) {
 				return mine;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	public boolean hasWorldEdit() {
 		return worldEdit != null;
 	}
-	
+
 	public WorldEditPlugin getWorldEdit() {
 		return worldEdit;
 	}
-	
+
 	private boolean setupConfig() {
 		File pluginFolder = getDataFolder();
 		if (!pluginFolder.exists() && !pluginFolder.mkdir()) {
@@ -291,7 +286,7 @@ public class MineResetLite extends JavaPlugin {
 		}
 		return true;
 	}
-	
+
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (command.getName().equalsIgnoreCase("mineresetlite")) {
 			if (args.length == 0) {
@@ -310,13 +305,13 @@ public class MineResetLite extends JavaPlugin {
 		}
 		return false; // Fallthrough
 	}
-	
+
 	private static class IsMineFile implements FilenameFilter {
 		public boolean accept(File file, String s) {
 			return s.contains(".mine.yml");
 		}
 	}
-	
+
 	private class UpdateWarner implements Listener {
 		@EventHandler(priority = EventPriority.MONITOR)
 		public void onJoin(PlayerJoinEvent event) {
@@ -331,12 +326,12 @@ public class MineResetLite extends JavaPlugin {
 			}
 		}
 	}
-	
+
 	private void convertPrisonMines() {
-		for (File file : getFilesInsideFolder(new File(getServer().getPluginManager().getPlugin("PrisonMines")
-				.getDataFolder(), "mines"))) {
+		for (File file : getFilesInsideFolder(
+				new File(getServer().getPluginManager().getPlugin("PrisonMines").getDataFolder(), "mines"))) {
 			FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-			
+
 			String name = config.getString("Name");
 			String[] coords = config.getString("Region").split(",");
 			String world = coords[0];
@@ -346,31 +341,31 @@ public class MineResetLite extends JavaPlugin {
 			int minX = Integer.valueOf(coords[4]);
 			int minY = Integer.valueOf(coords[5]);
 			int minZ = Integer.valueOf(coords[6]);
-			
+
 			Mine mine = new Mine(minX, minY, minZ, maxX, maxY, maxZ, name, Bukkit.getWorld(world));
 			mine.setSilence(false);
 			mine.setFillMode(false);
 			mine.setResetDelay(0);
-			
+
 			for (String blockComposition : config.getStringList("Blocks")) {
 				int id = Material.getMaterial(blockComposition.split("@")[0]).getId();
 				int percentage = Integer.valueOf(blockComposition.split("@")[1].split(":")[1]);
 				mine.getComposition().put(new SerializableBlock(id), Double.valueOf("0." + percentage));
 			}
-			
+
 			Bukkit.getLogger().info("Converted " + file.getName() + ", deleting file...");
 			file.delete();
 		}
-		
-		Bukkit.getLogger().info(
-				"PrisonMines conversion complete - please remove the folder PrisonMines. Disabling plugin...");
+
+		Bukkit.getLogger()
+				.info("PrisonMines conversion complete - please remove the folder PrisonMines. Disabling plugin...");
 	}
-	
+
 	private List<File> getFilesInsideFolder(File parentFile) {
 		List<File> results = new ArrayList<File>();
-		
+
 		File[] files = parentFile.listFiles();
-		
+
 		if (parentFile.listFiles() != null) {
 			for (File file : files) {
 				if (file.isFile()) {
@@ -378,8 +373,8 @@ public class MineResetLite extends JavaPlugin {
 				}
 			}
 		}
-		
+
 		return results;
 	}
-	
+
 }

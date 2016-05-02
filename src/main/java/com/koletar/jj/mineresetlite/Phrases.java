@@ -15,20 +15,20 @@ import org.bukkit.entity.Player;
  * @author jjkoletar
  */
 public class Phrases {
-	private static Phrases	instance;
-	private ResourceBundle	phrases;
-	private Properties		overrides;
-	
+	private static Phrases instance;
+	private ResourceBundle phrases;
+	private Properties overrides;
+
 	private Phrases() {
 	}
-	
+
 	public static Phrases getInstance() {
 		if (instance == null) {
 			instance = new Phrases();
 		}
 		return instance;
 	}
-	
+
 	public static String phrase(String key, Object... replacements) {
 		if (getInstance() == null) {
 			return "";
@@ -52,7 +52,7 @@ public class Phrases {
 		format = format.replace("&", "\u00A7").replace("\u00A7\u00A7", "&");
 		return format;
 	}
-	
+
 	public static String findName(Object o) {
 		if (o instanceof Mine) {
 			return ((Mine) o).getName();
@@ -70,11 +70,11 @@ public class Phrases {
 		}
 		return o.toString();
 	}
-	
+
 	public void initialize(Locale l) {
 		phrases = ResourceBundle.getBundle("phrases", l);
 	}
-	
+
 	public void overrides(Properties overrides) {
 		this.overrides = overrides;
 	}

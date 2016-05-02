@@ -14,36 +14,39 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * Specific command manager. Far less genericizied than sk89q's. </p> MRL's
- * command system is very much based on sk89q's command system for WorldEdit.
+ * Specific command manager. Far less genericizied than sk89q's.
+ * </p>
+ * MRL's command system is very much based on sk89q's command system for
+ * WorldEdit.
  *
  * @author jjkoletar
  */
 public class CommandManager {
-	private Map<String, Method>	commands;
-	private Map<Method, Object>	instances;
-	
+	private Map<String, Method> commands;
+	private Map<Method, Object> instances;
+
 	public CommandManager() {
 		commands = new HashMap<String, Method>();
 		instances = new HashMap<Method, Object>();
 	}
-	
+
 	public void register(Class<?> cls, Object obj) {
 		for (Method method : cls.getMethods()) {
 			if (!method.isAnnotationPresent(Command.class)) {
 				continue;
 			}
-			
+
 			Command command = method.getAnnotation(Command.class);
-			
+
 			for (String alias : command.aliases()) {
 				commands.put(alias, method);
 			}
 			instances.put(method, obj);
 		}
 	}
-	
-	@Command(aliases = { "help", "?" }, description = "Provide information about MineResetLite commands", min = 0, max = -1)
+
+	@Command(aliases = { "help",
+			"?" }, description = "Provide information about MineResetLite commands", min = 0, max = -1)
 	public void help(CommandSender sender, String[] args) {
 		if (args.length >= 1) {
 			// Subcommand help?
@@ -78,9 +81,9 @@ public class CommandManager {
 				sender.sendMessage(phrase("helpDesc", command.description()));
 			}
 		}
-		
+
 	}
-	
+
 	public void callCommand(String cmdName, CommandSender sender, String[] args) {
 		// Do we have the command?
 		Method method = commands.get(cmdName.toLowerCase());
@@ -90,20 +93,20 @@ public class CommandManager {
 		}
 		// Get annotation
 		Command command = method.getAnnotation(Command.class);
-		
+
 		// Validate arguments
 		if (!(command.min() <= args.length && (command.max() == -1 || command.max() >= args.length))) {
 			sender.sendMessage(phrase("invalidArguments"));
 			sender.sendMessage(phrase("invalidArgsUsage", command.aliases()[0], command.usage()));
 			return;
 		}
-		
+
 		// Player or console?
 		if (command.onlyPlayers() && !(sender instanceof Player)) {
 			sender.sendMessage(phrase("notAPlayer"));
 			return;
 		}
-		
+
 		// Permission checks
 		boolean may = false;
 		if (command.permissions().length == 0) {
@@ -118,7 +121,7 @@ public class CommandManager {
 			sender.sendMessage(phrase("noPermission"));
 			return;
 		}
-		
+
 		// Run command
 		Object[] methodArgs = { sender, args };
 		try {

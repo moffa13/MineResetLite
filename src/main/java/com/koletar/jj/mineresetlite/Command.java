@@ -4,8 +4,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Command annotation to label commands. </p> MRL's command system is very much
- * based on sk89q's command system for WorldEdit.
+ * Command annotation to label commands.
+ * </p>
+ * MRL's command system is very much based on sk89q's command system for
+ * WorldEdit.
  *
  * @author jjkoletar
  */
@@ -17,24 +19,24 @@ public @interface Command {
 	 * @return Aliases
 	 */
 	String[] aliases();
-	
+
 	/**
 	 * Usage string for arguments passed to the command.
 	 *
 	 * @return
 	 */
 	String usage() default "";
-	
+
 	/**
 	 * @return Short description of the command's function.
 	 */
 	String description();
-	
+
 	/**
 	 * @return Multilined help text describing the command in full
 	 */
 	String[] help() default {};
-	
+
 	/**
 	 * Permissions necessary for the execution of the command. An empty array
 	 * (the default) means the command requires no permissions.
@@ -42,17 +44,17 @@ public @interface Command {
 	 * @return Permissions array
 	 */
 	String[] permissions() default {};
-	
+
 	/**
 	 * @return Minimum number of arguments
 	 */
 	int min() default 0;
-	
+
 	/**
 	 * @return Max number of arguments. -1 for unlimited
 	 */
 	int max() default -1;
-	
+
 	/**
 	 * @return Does the command require a player to execute it or not?
 	 */

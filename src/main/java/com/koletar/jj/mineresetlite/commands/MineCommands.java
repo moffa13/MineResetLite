@@ -28,25 +28,27 @@ import com.sk89q.worldedit.bukkit.selections.Selection;
  * @author jjkoletar
  */
 public class MineCommands {
-	private MineResetLite			plugin;
-	private Map<Player, Location>	point1;
-	private Map<Player, Location>	point2;
-	
+	private MineResetLite plugin;
+	private Map<Player, Location> point1;
+	private Map<Player, Location> point2;
+
 	public MineCommands(MineResetLite plugin) {
 		this.plugin = plugin;
 		point1 = new HashMap<Player, Location>();
 		point2 = new HashMap<Player, Location>();
 	}
-	
-	@Command(aliases = { "list", "l" }, description = "List the names of all Mines", permissions = { "mineresetlite.mine.list" }, help = { "List the names of all Mines currently created, across all worlds." }, min = 0, max = 0, onlyPlayers = false)
+
+	@Command(aliases = { "list", "l" }, description = "List the names of all Mines", permissions = {
+			"mineresetlite.mine.list" }, help = {
+					"List the names of all Mines currently created, across all worlds." }, min = 0, max = 0, onlyPlayers = false)
 	public void listMines(CommandSender sender, String[] args) {
 		sender.sendMessage(phrase("mineList", StringTools.buildList(plugin.mines, "&c", "&d, ")));
 	}
-	
+
 	@Command(aliases = { "pos1", "p1" }, description = "Change your first selection point", help = {
 			"Run this command to set your first selection point to the block you are looking at.",
 			"Use /mrl pos1 -feet to set your first point to the location you are standing on." }, usage = "(-feet)", permissions = {
-			"mineresetlite.mine.create", "mineresetlite.mine.redefine" }, min = 0, max = 1, onlyPlayers = true)
+					"mineresetlite.mine.create", "mineresetlite.mine.redefine" }, min = 0, max = 1, onlyPlayers = true)
 	public void setPoint1(CommandSender sender, String[] args) throws InvalidCommandArgumentsException {
 		Player player = (Player) sender;
 		if (args.length == 0) {
@@ -63,11 +65,11 @@ public class MineCommands {
 		// Args weren't empty or -feet, bad args
 		throw new InvalidCommandArgumentsException();
 	}
-	
+
 	@Command(aliases = { "pos2", "p2" }, description = "Change your first selection point", help = {
 			"Run this command to set your second selection point to the block you are looking at.",
 			"Use /mrl pos2 -feet to set your second point to the location you are standing on." }, usage = "(-feet)", permissions = {
-			"mineresetlite.mine.create", "mineresetlite.mine.redefine" }, min = 0, max = 1, onlyPlayers = true)
+					"mineresetlite.mine.create", "mineresetlite.mine.redefine" }, min = 0, max = 1, onlyPlayers = true)
 	public void setPoint2(CommandSender sender, String[] args) throws InvalidCommandArgumentsException {
 		Player player = (Player) sender;
 		if (args.length == 0) {
@@ -84,10 +86,12 @@ public class MineCommands {
 		// Args weren't empty or -feet, bad args
 		throw new InvalidCommandArgumentsException();
 	}
-	
-	@Command(aliases = { "create", "save" }, description = "Create a mine from either your WorldEdit selection or by manually specifying the points", help = {
-			"Provided you have a selection made via either WorldEdit or selecting the points using MRL,",
-			"an empty mine will be created. This mine will have no composition and default settings." }, usage = "<mine name>", permissions = { "mineresetlite.mine.create" }, min = 1, max = -1, onlyPlayers = true)
+
+	@Command(aliases = { "create",
+			"save" }, description = "Create a mine from either your WorldEdit selection or by manually specifying the points", help = {
+					"Provided you have a selection made via either WorldEdit or selecting the points using MRL,",
+					"an empty mine will be created. This mine will have no composition and default settings." }, usage = "<mine name>", permissions = {
+							"mineresetlite.mine.create" }, min = 1, max = -1, onlyPlayers = true)
 	public void createMine(CommandSender sender, String[] args) {
 		// Find out how they selected the region
 		Player player = (Player) sender;
@@ -148,9 +152,11 @@ public class MineCommands {
 		player.sendMessage(phrase("mineCreated", newMine));
 		plugin.buffSave();
 	}
-	
-	@Command(aliases = { "redefine", "define", "changeboundaries" }, description = "Redefine a mine's boundaries from either your WorldEdit selection or by manually specifying the points", help = {
-			"Provided you have a selection made via either WorldEdit or selecting the points using MRL," }, usage = "<mine name>", permissions = { "mineresetlite.mine.redefine" }, min = 1, max = -1, onlyPlayers = true)
+
+	@Command(aliases = { "redefine", "define",
+			"changeboundaries" }, description = "Redefine a mine's boundaries from either your WorldEdit selection or by manually specifying the points", help = {
+					"Provided you have a selection made via either WorldEdit or selecting the points using MRL," }, usage = "<mine name>", permissions = {
+							"mineresetlite.mine.redefine" }, min = 1, max = -1, onlyPlayers = true)
 	public void redefineMine(CommandSender sender, String[] args) {
 		// Find out how they selected the region
 		Player player = (Player) sender;
@@ -209,11 +215,13 @@ public class MineCommands {
 		player.sendMessage(phrase("mineRedefined"));
 		plugin.buffSave();
 	}
-	
-	@Command(aliases = { "info", "i" }, description = "List information about a mine, or the mine you are standing in.", usage = "[mine name]", permissions = { "mineresetlite.mine.info" }, min = 0, max = -1, onlyPlayers = false)
+
+	@Command(aliases = { "info",
+			"i" }, description = "List information about a mine, or the mine you are standing in.", usage = "[mine name]", permissions = {
+					"mineresetlite.mine.info" }, min = 0, max = -1, onlyPlayers = false)
 	public void mineInfo(CommandSender sender, String[] args) {
 		Mine mine = null;
-		
+
 		if (args.length == 1) {
 			Mine[] mines = plugin.matchMines(StringTools.buildSpacedArgument(args));
 			if (mines.length > 1) {
@@ -223,12 +231,12 @@ public class MineCommands {
 				sender.sendMessage(phrase("noMinesMatched"));
 				return;
 			}
-			
+
 			mine = mines[0];
 		} else {
 			if (sender instanceof Player) {
 				boolean inside = false;
-				
+
 				for (Mine aMine : plugin.mines) {
 					if (aMine.isInside((Player) sender)) {
 						mine = aMine;
@@ -236,7 +244,7 @@ public class MineCommands {
 						continue;
 					}
 				}
-				
+
 				if (!inside) {
 					sender.sendMessage(phrase("notInsideAMine"));
 					return;
@@ -247,7 +255,7 @@ public class MineCommands {
 				return;
 			}
 		}
-		
+
 		sender.sendMessage(phrase("mineInfoName", mine.getName()));
 		sender.sendMessage(phrase("mineInfoWorld", mine.getWorld()));
 		// Build composition list
@@ -272,7 +280,8 @@ public class MineCommands {
 		}
 		sender.sendMessage(phrase("mineInfoSilence", mine.isSilent()));
 		if (mine.getResetWarnings().size() > 0) {
-			sender.sendMessage(phrase("mineInfoWarningTimes", StringTools.buildList(mine.getResetWarnings(), "", ", ")));
+			sender.sendMessage(
+					phrase("mineInfoWarningTimes", StringTools.buildList(mine.getResetWarnings(), "", ", ")));
 		}
 		if (mine.getSurface() != null) {
 			sender.sendMessage(phrase("mineInfoSurface", mine.getSurface()));
@@ -281,11 +290,12 @@ public class MineCommands {
 			sender.sendMessage(phrase("mineInfoFillMode"));
 		}
 	}
-	
+
 	@Command(aliases = { "set", "add", "+" }, description = "Set the percentage of a block in the mine", help = {
 			"This command will always overwrite the current percentage for the specified block,",
 			"if a percentage has already been set. You cannot set the percentage of any specific",
-			"block, such that the percentage would then total over 100%." }, usage = "<mine name> <block>:(data) <percentage>%", permissions = { "mineresetlite.mine.composition" }, min = 3, max = -1, onlyPlayers = false)
+			"block, such that the percentage would then total over 100%." }, usage = "<mine name> <block>:(data) <percentage>%", permissions = {
+					"mineresetlite.mine.composition" }, min = 3, max = -1, onlyPlayers = false)
 	public void setComposition(CommandSender sender, String[] args) {
 		Mine[] mines = plugin.matchMines(StringTools.buildSpacedArgument(args, 2));
 		if (mines.length > 1) {
@@ -360,8 +370,10 @@ public class MineCommands {
 				(1 - mines[0].getCompositionTotal()) * 100));
 		plugin.buffSave();
 	}
-	
-	@Command(aliases = { "unset", "remove", "-" }, description = "Remove a block from the composition of a mine", usage = "<mine name> <block>:(data)", permissions = { "mineresetlite.mine.composition" }, min = 2, max = -1, onlyPlayers = false)
+
+	@Command(aliases = { "unset", "remove",
+			"-" }, description = "Remove a block from the composition of a mine", usage = "<mine name> <block>:(data)", permissions = {
+					"mineresetlite.mine.composition" }, min = 2, max = -1, onlyPlayers = false)
 	public void unsetComposition(CommandSender sender, String[] args) {
 		Mine[] mines = plugin.matchMines(StringTools.buildSpacedArgument(args, 1));
 		if (mines.length > 1) {
@@ -396,20 +408,21 @@ public class MineCommands {
 		for (Map.Entry<SerializableBlock, Double> entry : mines[0].getComposition().entrySet()) {
 			if (entry.getKey().equals(block)) {
 				mines[0].getComposition().remove(entry.getKey());
-				sender.sendMessage(phrase("blockRemovedFromMine", mines[0], block,
-						(1 - mines[0].getCompositionTotal()) * 100));
+				sender.sendMessage(
+						phrase("blockRemovedFromMine", mines[0], block, (1 - mines[0].getCompositionTotal()) * 100));
 				return;
 			}
 		}
 		sender.sendMessage(phrase("blockNotInMine", mines[0], block));
 		plugin.buffSave();
 	}
-	
+
 	@Command(aliases = { "reset", "r" }, description = "Reset a mine", help = {
 			"If you supply the -s argument, the mine will silently reset. Resets triggered via",
 			"this command will not show a 1 minute warning, unless this mine is flagged to always",
 			"have a warning. If the mine's composition doesn't equal 100%, the composition will be",
-			"padded with air until the total equals 100%." }, usage = "<mine name> (-s)", permissions = { "mineresetlite.mine.reset" }, min = 1, max = -1, onlyPlayers = false)
+			"padded with air until the total equals 100%." }, usage = "<mine name> (-s)", permissions = {
+					"mineresetlite.mine.reset" }, min = 1, max = -1, onlyPlayers = false)
 	public void resetMine(CommandSender sender, String[] args) {
 		Mine[] mines = plugin.matchMines(StringTools.buildSpacedArgument(args).replace(" -s", ""));
 		if (mines.length > 1) {
@@ -427,15 +440,17 @@ public class MineCommands {
 			mines[0].reset();
 		}
 	}
-	
-	@Command(aliases = { "flag", "f" }, description = "Set various properties of a mine, including automatic resets", help = {
-			"Available flags:",
-			"resetDelay: An integer number of minutes specifying the time between automatic resets. Set to 0 to disable automatic resets.",
-			"resetWarnings: A comma separated list of integer minutes to warn before the automatic reset. Warnings must be less than the reset delay.",
-			"surface: A block that will cover the entire top surface of the mine when reset, obscuring surface ores. Set surface to air to clear the value.",
-			"fillMode: An alternate reset algorithm that will only \"reset\" air blocks inside your mine. Set to true or false.",
-			"isSilent: A boolean (true or false) of whether or not this mine should broadcast a reset notification when it is reset *automatically*",
-			"ignoreLadders: A boolean (true or false) of whether or not this mine should replaces ladders when resetting"}, usage = "<mine name> <setting> <value>", permissions = { "mineresetlite.mine.flag" }, min = 3, max = -1, onlyPlayers = false)
+
+	@Command(aliases = { "flag",
+			"f" }, description = "Set various properties of a mine, including automatic resets", help = {
+					"Available flags:",
+					"resetDelay: An integer number of minutes specifying the time between automatic resets. Set to 0 to disable automatic resets.",
+					"resetWarnings: A comma separated list of integer minutes to warn before the automatic reset. Warnings must be less than the reset delay.",
+					"surface: A block that will cover the entire top surface of the mine when reset, obscuring surface ores. Set surface to air to clear the value.",
+					"fillMode: An alternate reset algorithm that will only \"reset\" air blocks inside your mine. Set to true or false.",
+					"isSilent: A boolean (true or false) of whether or not this mine should broadcast a reset notification when it is reset *automatically*",
+					"ignoreLadders: A boolean (true or false) of whether or not this mine should replaces ladders when resetting" }, usage = "<mine name> <setting> <value>", permissions = {
+							"mineresetlite.mine.flag" }, min = 3, max = -1, onlyPlayers = false)
 	public void flag(CommandSender sender, String[] args) {
 		Mine[] mines = plugin.matchMines(StringTools.buildSpacedArgument(args, 2));
 		if (mines.length > 1) {
@@ -578,8 +593,10 @@ public class MineCommands {
 		}
 		sender.sendMessage(phrase("unknownFlag"));
 	}
-	
-	@Command(aliases = { "erase" }, description = "Completely erase a mine", help = { "Like most erasures of data, be sure you don't need to recover anything from this mine before you delete it." }, usage = "<mine name>", permissions = { "mineresetlite.mine.erase" }, min = 1, max = -1, onlyPlayers = false)
+
+	@Command(aliases = { "erase" }, description = "Completely erase a mine", help = {
+			"Like most erasures of data, be sure you don't need to recover anything from this mine before you delete it." }, usage = "<mine name>", permissions = {
+					"mineresetlite.mine.erase" }, min = 1, max = -1, onlyPlayers = false)
 	public void erase(CommandSender sender, String[] args) {
 		Mine[] mines = plugin.matchMines(StringTools.buildSpacedArgument(args));
 		if (mines.length > 1) {
@@ -592,8 +609,10 @@ public class MineCommands {
 		plugin.eraseMine(mines[0]);
 		sender.sendMessage(phrase("mineErased", mines[0]));
 	}
-	
-	@Command(aliases = { "reschedule" }, description = "Synchronize all automatic mine resets", help = { "This command will set the 'start time' of the mine resets to the same point." }, usage = "", permissions = { "mineresetlite.mine.flag" }, min = 0, max = 0, onlyPlayers = false)
+
+	@Command(aliases = { "reschedule" }, description = "Synchronize all automatic mine resets", help = {
+			"This command will set the 'start time' of the mine resets to the same point." }, usage = "", permissions = {
+					"mineresetlite.mine.flag" }, min = 0, max = 0, onlyPlayers = false)
 	public void reschedule(CommandSender sender, String[] args) {
 		for (Mine mine : plugin.mines) {
 			mine.setResetDelay(mine.getResetDelay());
@@ -601,29 +620,31 @@ public class MineCommands {
 		plugin.buffSave();
 		sender.sendMessage(phrase("rescheduled"));
 	}
-	
-	@Command(aliases = { "tp", "teleport" }, description = "Teleport to a mine", help = { "This will teleport you to the center of a mine at the top." }, usage = "<mine name>", permissions = { "mineresetlite.mine.tp" }, min = 1, max = -1, onlyPlayers = true)
+
+	@Command(aliases = { "tp", "teleport" }, description = "Teleport to a mine", help = {
+			"This will teleport you to the center of a mine at the top." }, usage = "<mine name>", permissions = {
+					"mineresetlite.mine.tp" }, min = 1, max = -1, onlyPlayers = true)
 	public void teleport(CommandSender sender, String[] args) {
 		Mine mine = null;
-		
+
 		for (Mine aMine : plugin.mines) {
 			if (aMine.getName().equalsIgnoreCase(args[0])) {
 				mine = aMine;
 			}
 		}
-		
+
 		if (mine == null) {
 			sender.sendMessage(phrase("noMinesMatched"));
 			return;
 		}
-		
+
 		mine.teleport((Player) sender);
 	}
-	
+
 	@Command(aliases = { "settp", "stp" }, description = "Set the mine's reset teleportation point", help = {
 			"Run this command to set your the mine's telportation point to your location.",
-			"Use /mrl removetp <mine name> to remove the teleportation point."}, usage = "<mine name>", permissions = {
-			"mineresetlite.mine.settp"}, min = 1, max = -1, onlyPlayers = true)
+			"Use /mrl removetp <mine name> to remove the teleportation point." }, usage = "<mine name>", permissions = {
+					"mineresetlite.mine.settp" }, min = 1, max = -1, onlyPlayers = true)
 	public void setTPPos(CommandSender sender, String[] args) throws InvalidCommandArgumentsException {
 		Player player = (Player) sender;
 		Mine[] mines = plugin.matchMines(StringTools.buildSpacedArgument(args));
@@ -638,12 +659,12 @@ public class MineCommands {
 		sender.sendMessage(phrase("tpPosSet", mines[0]));
 		return;
 	}
-	
+
 	@Command(aliases = { "removetp", "rtp" }, description = "Remove the mine's reset teleportation point", help = {
 			"Run this command to set your the mine's telportation point to your location.",
 			"Use /mrl settp -r to remove the teleportation point.",
-			"use /mrl settp x y z to set it to a specific point."}, usage = "<mine name>", permissions = {
-			"mineresetlite.mine.removetp"}, min = 1, max = -1, onlyPlayers = true)
+			"use /mrl settp x y z to set it to a specific point." }, usage = "<mine name>", permissions = {
+					"mineresetlite.mine.removetp" }, min = 1, max = -1, onlyPlayers = true)
 	public void removeTPPos(CommandSender sender, String[] args) throws InvalidCommandArgumentsException {
 		Player player = (Player) sender;
 		Mine[] mines = plugin.matchMines(StringTools.buildSpacedArgument(args));

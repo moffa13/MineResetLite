@@ -30,15 +30,15 @@ public class StringTools {
 		}
 		return sb.toString();
 	}
-	
+
 	public static String buildSpacedArgument(String[] args, int stop) {
 		return buildSpacedArgument(args, 0, stop);
 	}
-	
+
 	public static String buildSpacedArgument(String[] args) {
 		return buildSpacedArgument(args, 0);
 	}
-	
+
 	public static String buildList(Object[] items, String prefix, String suffix) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < items.length; i++) {
@@ -50,7 +50,7 @@ public class StringTools {
 		}
 		return sb.toString();
 	}
-	
+
 	public static String buildList(List<?> items, String prefix, String suffix) {
 		return buildList(items.toArray(), prefix, suffix);
 	}

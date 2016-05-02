@@ -21,25 +21,25 @@ import org.bukkit.entity.Player;
  * @author jjkoletar
  */
 public class Mine implements ConfigurationSerializable {
-	private int								minX;
-	private int								minY;
-	private int								minZ;
-	private int								maxX;
-	private int								maxY;
-	private int								maxZ;
-	private World							world;
-	private Map<SerializableBlock, Double>	composition;
-	private int								resetDelay;
-	private List<Integer>					resetWarnings;
-	private String							name;
-	private SerializableBlock				surface;
-	private boolean							fillMode;
-	private int								resetClock;
-	private boolean							isSilent;
-	private boolean							ignoreLadders = false;
-	private int								tpX = 0;
-	private int								tpY = -1;
-	private int								tpZ = 0;
+	private int minX;
+	private int minY;
+	private int minZ;
+	private int maxX;
+	private int maxY;
+	private int maxZ;
+	private World world;
+	private Map<SerializableBlock, Double> composition;
+	private int resetDelay;
+	private List<Integer> resetWarnings;
+	private String name;
+	private SerializableBlock surface;
+	private boolean fillMode;
+	private int resetClock;
+	private boolean isSilent;
+	private boolean ignoreLadders = false;
+	private int tpX = 0;
+	private int tpY = -1;
+	private int tpZ = 0;
 
 	public Mine(int minX, int minY, int minZ, int maxX, int maxY, int maxZ, String name, World world) {
 		this.minX = minX;
@@ -72,7 +72,8 @@ public class Mine implements ConfigurationSerializable {
 		}
 		if (world == null) {
 			Logger l = Bukkit.getLogger();
-			l.severe("[MineResetLite] Unable to find a world! Please include these logger lines along with the stack trace when reporting this bug!");
+			l.severe(
+					"[MineResetLite] Unable to find a world! Please include these logger lines along with the stack trace when reporting this bug!");
 			l.severe("[MineResetLite] Attempted to load world named: " + me.get("world"));
 			l.severe("[MineResetLite] Worlds listed: " + StringTools.buildList(Bukkit.getWorlds(), "", ", "));
 			throw new IllegalArgumentException("World was null!");
@@ -118,7 +119,8 @@ public class Mine implements ConfigurationSerializable {
 		if (me.containsKey("ignoreLadders")) {
 			ignoreLadders = (Boolean) me.get("ignoreLadders");
 		}
-		if (me.containsKey("tpY")){ //Should contain all three if it contains this one
+		if (me.containsKey("tpY")) { // Should contain all three if it contains
+										// this one
 			tpX = (Integer) me.get("tpX");
 			tpY = (Integer) me.get("tpY");
 			tpZ = (Integer) me.get("tpZ");
@@ -304,9 +306,8 @@ public class Mine implements ConfigurationSerializable {
 	}
 
 	public boolean isInside(Location l) {
-		return (l.getWorld().getName().equals(getWorld().getName()))
-				&& (l.getBlockX() >= minX && l.getBlockX() <= maxX) && (l.getBlockY() >= minY && l.getBlockY() <= maxY)
-				&& (l.getBlockZ() >= minZ && l.getBlockZ() <= maxZ);
+		return (l.getWorld().getName().equals(getWorld().getName())) && (l.getBlockX() >= minX && l.getBlockX() <= maxX)
+				&& (l.getBlockY() >= minY && l.getBlockY() <= maxY) && (l.getBlockZ() >= minZ && l.getBlockZ() <= maxZ);
 	}
 
 	public void reset() {
@@ -316,17 +317,17 @@ public class Mine implements ConfigurationSerializable {
 		for (Player p : Bukkit.getServer().getOnlinePlayers()) {
 			Location l = p.getLocation();
 			if (isInside(p)) {
-				if (tpY >= 0) { //If tpY is set to something (Not -1)
+				if (tpY >= 0) { // If tpY is set to something (Not -1)
 					p.teleport(getTpPos());
-				} else { //No tp position set (Teleport up)
+				} else { // No tp position set (Teleport up)
 					// make sure we find a safe location above the mine
 					Location tp = new Location(world, l.getX(), maxY + 1, l.getZ());
 					Block block = tp.getBlock();
 
 					// check to make sure we don't suffocate player
 					if (block.getType() != Material.AIR || block.getRelative(BlockFace.UP).getType() != Material.AIR) {
-						tp = new Location(world, l.getX(), l.getWorld().getHighestBlockYAt(l.getBlockX(), l.getBlockZ()),
-								l.getZ());
+						tp = new Location(world, l.getX(),
+								l.getWorld().getHighestBlockYAt(l.getBlockX(), l.getBlockZ()), l.getZ());
 					}
 					p.teleport(tp);
 				}
@@ -338,7 +339,7 @@ public class Mine implements ConfigurationSerializable {
 			for (int y = minY; y <= maxY; ++y) {
 				for (int z = minZ; z <= maxZ; ++z) {
 					if (!fillMode || world.getBlockTypeIdAt(x, y, z) == 0) {
-						if(world.getBlockTypeIdAt(x, y, z) == 65 & ignoreLadders) {
+						if (world.getBlockTypeIdAt(x, y, z) == 65 & ignoreLadders) {
 							continue;
 						}
 
@@ -383,8 +384,8 @@ public class Mine implements ConfigurationSerializable {
 	}
 
 	public static class CompositionEntry {
-		private SerializableBlock	block;
-		private double				chance;
+		private SerializableBlock block;
+		private double chance;
 
 		public CompositionEntry(SerializableBlock block, double chance) {
 			this.block = block;
@@ -429,8 +430,9 @@ public class Mine implements ConfigurationSerializable {
 		Block block = location.getBlock();
 
 		if (block.getType() != Material.AIR || block.getRelative(BlockFace.UP).getType() != Material.AIR) {
-			location = new Location(world, location.getX(), location.getWorld().getHighestBlockYAt(
-					location.getBlockX(), location.getBlockZ()), location.getZ());
+			location = new Location(world, location.getX(),
+					location.getWorld().getHighestBlockYAt(location.getBlockX(), location.getBlockZ()),
+					location.getZ());
 		}
 
 		player.teleport(location);
