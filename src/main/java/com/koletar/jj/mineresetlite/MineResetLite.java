@@ -84,7 +84,7 @@ public class MineResetLite extends JavaPlugin {
 		
 		if (!setupConfig()) {
 			logger.severe("Error while loading configuration.");
-			logger.severe("Plugin initlization didsabled");
+			logger.severe("Plugin initlization disabled");
 			return;
 		}
 		
