@@ -45,9 +45,6 @@ public class MineResetLite extends JavaPlugin {
 	private WorldEditPlugin worldEdit = null;
 	private int saveTaskId = -1;
 	private int resetTaskId = -1;
-	private BukkitTask updateTask = null;
-	private boolean needsUpdate;
-	private boolean isUpdateCritical;
 
 	public static MineResetLite instance;
 
@@ -154,9 +151,6 @@ public class MineResetLite extends JavaPlugin {
 	public void onDisable() {
 		getServer().getScheduler().cancelTask(resetTaskId);
 		getServer().getScheduler().cancelTask(saveTaskId);
-		if (updateTask != null) {
-			updateTask.cancel();
-		}
 		HandlerList.unregisterAll(this);
 		logger.info("MineResetLite disabled");
 	}
@@ -311,21 +305,6 @@ public class MineResetLite extends JavaPlugin {
 	private static class IsMineFile implements FilenameFilter {
 		public boolean accept(File file, String s) {
 			return s.contains(".mine.yml");
-		}
-	}
-
-	private class UpdateWarner implements Listener {
-		@EventHandler(priority = EventPriority.MONITOR)
-		public void onJoin(PlayerJoinEvent event) {
-			if (event.getPlayer().hasPermission("mineresetlite.updates") && needsUpdate) {
-				event.getPlayer().sendMessage(phrase("updateWarning1"));
-				event.getPlayer().sendMessage(phrase("updateWarning2"));
-				if (isUpdateCritical) {
-					event.getPlayer().sendMessage(phrase("criticalUpdateWarningDecoration"));
-					event.getPlayer().sendMessage(phrase("criticalUpdateWarning"));
-					event.getPlayer().sendMessage(phrase("criticalUpdateWarningDecoration"));
-				}
-			}
 		}
 	}
 
