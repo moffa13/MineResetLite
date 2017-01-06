@@ -6,7 +6,7 @@
 
 	<groupId>xyz.boomclaw.plugins</groupId>
 	<artifactId>mineresetlite</artifactId>
-	<version>0.4.7</version>
+	<version>0.4.8</version>
 	<name>MineResetLite</name>
 
 	<repositories>
@@ -22,9 +22,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>1.11-R0.1-SNAPSHOT</version>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot-api</artifactId>
+			<version>1.11.2-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
