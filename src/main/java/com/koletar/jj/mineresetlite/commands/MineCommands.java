@@ -34,8 +34,8 @@ public class MineCommands {
 
 	public MineCommands(MineResetLite plugin) {
 		this.plugin = plugin;
-		point1 = new HashMap<Player, Location>();
-		point2 = new HashMap<Player, Location>();
+		point1 = new HashMap<>();
+		point2 = new HashMap<>();
 	}
 
 	@Command(aliases = { "list", "l" }, description = "List the names of all Mines", permissions = {
@@ -53,7 +53,7 @@ public class MineCommands {
 		Player player = (Player) sender;
 		if (args.length == 0) {
 			// Use block being looked at
-			point1.put(player, player.getTargetBlock((HashSet<Byte>) null, 100).getLocation());
+			point1.put(player, player.getTargetBlock((HashSet<Material>) null, 100).getLocation());
 			player.sendMessage(phrase("firstPointSet"));
 			return;
 		} else if (args[0].equalsIgnoreCase("-feet")) {
@@ -62,6 +62,7 @@ public class MineCommands {
 			player.sendMessage(phrase("firstPointSet"));
 			return;
 		}
+		// Are you ok?
 		// Args weren't empty or -feet, bad args
 		throw new InvalidCommandArgumentsException();
 	}
@@ -74,7 +75,7 @@ public class MineCommands {
 		Player player = (Player) sender;
 		if (args.length == 0) {
 			// Use block being looked at
-			point2.put(player, player.getTargetBlock((HashSet<Byte>) null, 100).getLocation());
+			point2.put(player, player.getTargetBlock((HashSet<Material>) null, 100).getLocation());
 			player.sendMessage(phrase("secondPointSet"));
 			return;
 		} else if (args[0].equalsIgnoreCase("-feet")) {
@@ -241,7 +242,6 @@ public class MineCommands {
 					if (aMine.isInside((Player) sender)) {
 						mine = aMine;
 						inside = true;
-						continue;
 					}
 				}
 
@@ -333,7 +333,7 @@ public class MineCommands {
 		}
 		StringBuilder psb = new StringBuilder(percentageS);
 		psb.deleteCharAt(psb.length() - 1);
-		double percentage = 0;
+		double percentage;
 		try {
 			percentage = Double.valueOf(psb.toString());
 		} catch (NumberFormatException nfe) {
@@ -485,7 +485,7 @@ public class MineCommands {
 		} else if (setting.equalsIgnoreCase("resetWarnings") || setting.equalsIgnoreCase("resetWarning")) {
 			String[] bits = value.split(",");
 			List<Integer> warnings = mines[0].getResetWarnings();
-			List<Integer> oldList = new LinkedList<Integer>(warnings);
+			List<Integer> oldList = new LinkedList<>(warnings);
 			warnings.clear();
 			for (String bit : bits) {
 				try {
@@ -645,7 +645,7 @@ public class MineCommands {
 			"Run this command to set your the mine's telportation point to your location.",
 			"Use /mrl removetp <mine name> to remove the teleportation point." }, usage = "<mine name>", permissions = {
 					"mineresetlite.mine.settp" }, min = 1, max = -1, onlyPlayers = true)
-	public void setTPPos(CommandSender sender, String[] args) throws InvalidCommandArgumentsException {
+	public void setTPPos(CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 		Mine[] mines = plugin.matchMines(StringTools.buildSpacedArgument(args));
 		if (mines.length > 1) {
@@ -657,7 +657,6 @@ public class MineCommands {
 		}
 		mines[0].setTpPos(player.getLocation());
 		sender.sendMessage(phrase("tpPosSet", mines[0]));
-		return;
 	}
 
 	@Command(aliases = { "removetp", "rtp" }, description = "Remove the mine's reset teleportation point", help = {
@@ -665,7 +664,7 @@ public class MineCommands {
 			"Use /mrl settp -r to remove the teleportation point.",
 			"use /mrl settp x y z to set it to a specific point." }, usage = "<mine name>", permissions = {
 					"mineresetlite.mine.removetp" }, min = 1, max = -1, onlyPlayers = true)
-	public void removeTPPos(CommandSender sender, String[] args) throws InvalidCommandArgumentsException {
+	public void removeTPPos(CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 		Mine[] mines = plugin.matchMines(StringTools.buildSpacedArgument(args));
 		if (mines.length > 1) {
@@ -677,6 +676,5 @@ public class MineCommands {
 		}
 		mines[0].setTpPos(new Location(player.getWorld(), 0, -1, 0));
 		sender.sendMessage(phrase("tpPosRemove", mines[0]));
-		return;
 	}
 }

@@ -1,18 +1,8 @@
 package com.koletar.jj.mineresetlite;
 
-import static com.koletar.jj.mineresetlite.Phrases.phrase;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.logging.Logger;
-
+import com.koletar.jj.mineresetlite.commands.MineCommands;
+import com.koletar.jj.mineresetlite.commands.PluginCommands;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -21,18 +11,16 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.bukkit.scheduler.BukkitTask;
 
-import com.koletar.jj.mineresetlite.commands.MineCommands;
-import com.koletar.jj.mineresetlite.commands.PluginCommands;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author jjkoletar
@@ -78,13 +66,13 @@ public class MineResetLite extends JavaPlugin {
 		logger = getLogger();
 		Bukkit.getLogger().info("[MineResetLite] MRL is managed and developed by Boomclaw under the Apache 2.0 license.");
 		Bukkit.getLogger().info("[MineResetLite] For any issues or suggestions, use the Spigot discussion thread. Do not PM any of the developers.");
-		
+
 		if (!setupConfig()) {
 			logger.severe("Error while loading configuration.");
 			logger.severe("Plugin initlization disabled");
 			return;
 		}
-		
+
 		commandManager = new CommandManager();
 		commandManager.register(MineCommands.class, new MineCommands(this));
 		commandManager.register(CommandManager.class, commandManager);
@@ -92,7 +80,7 @@ public class MineResetLite extends JavaPlugin {
 		Locale locale = new Locale(Config.getLocale());
 		Phrases.getInstance().initialize(locale);
 		File overrides = new File(getDataFolder(), "phrases.properties");
-		
+
 		if (overrides.exists()) {
 			Properties overridesProps = new Properties();
 			try {
@@ -102,7 +90,7 @@ public class MineResetLite extends JavaPlugin {
 			}
 			Phrases.getInstance().overrides(overridesProps);
 		}
-		
+
 		// Look for worldedit
 		if (getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
 			worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
@@ -111,23 +99,27 @@ public class MineResetLite extends JavaPlugin {
 		ConfigurationSerialization.registerClass(Mine.class);
 
 		// Load mines
-		File[] mineFiles = new File(getDataFolder(), "mines").listFiles(new IsMineFile());
-		for (File file : mineFiles) {
-			logger.info("Loading mine from file '" + file.getName() + "'...");
-			FileConfiguration fileConf = YamlConfiguration.loadConfiguration(file);
-			try {
-				Object o = fileConf.get("mine");
-				if (!(o instanceof Mine)) {
-					logger.severe("Mine wasn't a mine object! Something is off with serialization!");
-					continue;
+		File minesDirectory = new File(getDataFolder(), "mines");
+		if (minesDirectory.exists() && minesDirectory.isDirectory()) {
+			File[] mineFiles = minesDirectory.listFiles(new IsMineFile());
+			if (mineFiles == null) mineFiles = new File[0];
+			for (File file : mineFiles) {
+				logger.info("Loading mine from file '" + file.getName() + "'...");
+				FileConfiguration fileConf = YamlConfiguration.loadConfiguration(file);
+				try {
+					Object o = fileConf.get("mine");
+					if (!(o instanceof Mine)) {
+						logger.severe("Mine wasn't a mine object! Something is off with serialization!");
+						continue;
+					}
+					Mine mine = (Mine) o;
+					mines.add(mine);
+				} catch (Throwable t) {
+					logger.severe("Unable to load mine!");
 				}
-				Mine mine = (Mine) o;
-				mines.add(mine);
-			} catch (Throwable t) {
-				logger.severe("Unable to load mine!");
 			}
 		}
-		
+
 		resetTaskId = getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			public void run() {
 				for (Mine mine : mines) {
@@ -139,7 +131,7 @@ public class MineResetLite extends JavaPlugin {
 		try {
 			Metrics metrics = new Metrics(this);
 			metrics.start();
-		} catch (IOException e) {
+		} catch (IOException ignored) {
 		}
 
 		if (getServer().getPluginManager().getPlugin("PrisonMines") != null) {
@@ -205,15 +197,15 @@ public class MineResetLite extends JavaPlugin {
 	 */
 	public void buffSave() {
 		BukkitScheduler scheduler = getServer().getScheduler();
-		
+
 		if (saveTaskId != -1) {
 			// Cancel old task
 			scheduler.cancelTask(saveTaskId);
 		}
-		
+
 		// Schedule save
 		final MineResetLite plugin = this;
-		
+
 		scheduler.scheduleSyncDelayedTask(this, new Runnable() {
 			public void run() {
 				plugin.save();
@@ -304,7 +296,7 @@ public class MineResetLite extends JavaPlugin {
 
 	private static class IsMineFile implements FilenameFilter {
 		public boolean accept(File file, String s) {
-			return s.contains(".mine.yml");
+			return file.isFile() && s.contains(".mine.yml");
 		}
 	}
 
@@ -347,7 +339,7 @@ public class MineResetLite extends JavaPlugin {
 
 		File[] files = parentFile.listFiles();
 
-		if (parentFile.listFiles() != null) {
+		if (files != null) {
 			for (File file : files) {
 				if (file.isFile()) {
 					results.add(file);
