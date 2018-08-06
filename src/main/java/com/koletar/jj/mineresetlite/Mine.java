@@ -16,6 +16,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 /**
  * @author jjkoletar
@@ -40,7 +41,7 @@ public class Mine implements ConfigurationSerializable {
 	private int tpX = 0;
 	private int tpY = -1;
 	private int tpZ = 0;
-
+	
 	public Mine(int minX, int minY, int minZ, int maxX, int maxY, int maxZ, String name, World world) {
 		this.minX = minX;
 		this.minY = minY;
@@ -338,20 +339,19 @@ public class Mine implements ConfigurationSerializable {
 		for (int x = minX; x <= maxX; ++x) {
 			for (int y = minY; y <= maxY; ++y) {
 				for (int z = minZ; z <= maxZ; ++z) {
-					if (!fillMode || world.getBlockTypeIdAt(x, y, z) == 0) {
-						if (world.getBlockTypeIdAt(x, y, z) == 65 & ignoreLadders) {
+					if (!fillMode || world.getBlockAt(x, y, z).getType() == Material.AIR) {
+						if (world.getBlockAt(x, y, z).getType() == Material.LADDER & ignoreLadders) {
 							continue;
 						}
 
 						if (y == maxY && surface != null) {
-							world.getBlockAt(x, y, z).setTypeIdAndData(surface.getBlockId(), surface.getData(), false);
+							world.getBlockAt(x, y, z).setType(surface.getBlockType());
 							continue;
 						}
 						double r = rand.nextDouble();
 						for (CompositionEntry ce : probabilityMap) {
 							if (r <= ce.getChance()) {
-								world.getBlockAt(x, y, z).setTypeIdAndData(ce.getBlock().getBlockId(),
-										ce.getBlock().getData(), false);
+								world.getBlockAt(x, y, z).setType(ce.getBlock().getBlockType());;
 								break;
 							}
 						}
@@ -410,7 +410,7 @@ public class Mine implements ConfigurationSerializable {
 		}
 		// Pad the remaining percentages with air
 		if (max < 1) {
-			composition.put(new SerializableBlock(0), 1 - max);
+			composition.put(new SerializableBlock(Material.AIR), 1 - max);
 			max = 1;
 		}
 		double i = 0;

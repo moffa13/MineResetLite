@@ -263,7 +263,7 @@ public class MineCommands {
 		for (Map.Entry<SerializableBlock, Double> entry : mine.getComposition().entrySet()) {
 			csb.append(entry.getValue() * 100);
 			csb.append("% ");
-			csb.append(Material.getMaterial(entry.getKey().getBlockId()).toString());
+			csb.append(entry.getKey().getBlockType());
 			if (entry.getKey().getData() != 0) {
 				csb.append(":");
 				csb.append(entry.getKey().getData());
@@ -345,7 +345,7 @@ public class MineCommands {
 			return;
 		}
 		percentage = percentage / 100; // Make it a programmatic percentage
-		SerializableBlock block = new SerializableBlock(m.getId(), data);
+		SerializableBlock block = new SerializableBlock(m.name());
 		Double oldPercentage = mines[0].getComposition().get(block);
 		double total = 0;
 		for (Map.Entry<SerializableBlock, Double> entry : mines[0].getComposition().entrySet()) {
@@ -404,7 +404,7 @@ public class MineCommands {
 			}
 		}
 		// Does the mine contain this block?
-		SerializableBlock block = new SerializableBlock(m.getId(), data);
+		SerializableBlock block = new SerializableBlock(m.name());
 		for (Map.Entry<SerializableBlock, Double> entry : mines[0].getComposition().entrySet()) {
 			if (entry.getKey().equals(block)) {
 				mines[0].getComposition().remove(entry.getKey());
@@ -542,7 +542,7 @@ public class MineCommands {
 				plugin.buffSave();
 				return;
 			}
-			SerializableBlock block = new SerializableBlock(m.getId(), data);
+			SerializableBlock block = new SerializableBlock(m.name());
 			mines[0].setSurface(block);
 			sender.sendMessage(phrase("surfaceBlockSet", mines[0]));
 			plugin.buffSave();

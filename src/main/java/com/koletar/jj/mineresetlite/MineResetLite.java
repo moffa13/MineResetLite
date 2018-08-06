@@ -92,14 +92,15 @@ public class MineResetLite extends JavaPlugin {
 		}
 
 		// Look for worldedit
-		if (getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
-			worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
-		}
+//		if (getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
+//			worldEdit = (WorldEditPlugin) getServer().getPluginManager().getPlugin("WorldEdit");
+//		}
 
 		ConfigurationSerialization.registerClass(Mine.class);
 
 		// Load mines
 		File minesDirectory = new File(getDataFolder(), "mines");
+		getLogger().info(getDataFolder().getAbsolutePath());
 		if (minesDirectory.exists() && minesDirectory.isDirectory()) {
 			File[] mineFiles = minesDirectory.listFiles(new IsMineFile());
 			if (mineFiles == null) mineFiles = new File[0];
@@ -163,7 +164,7 @@ public class MineResetLite extends JavaPlugin {
 		} else if (name.equalsIgnoreCase("coalore")) {
 			return Material.COAL_ORE;
 		} else if (name.equalsIgnoreCase("cake") || name.equalsIgnoreCase("cakeblock")) {
-			return Material.CAKE_BLOCK;
+			return Material.CAKE;
 		} else if (name.equalsIgnoreCase("emeraldore")) {
 			return Material.EMERALD_ORE;
 		} else if (name.equalsIgnoreCase("emeraldblock")) {
@@ -247,11 +248,11 @@ public class MineResetLite extends JavaPlugin {
 	}
 
 	public boolean hasWorldEdit() {
-		return worldEdit != null;
+		return false;
 	}
 
 	public WorldEditPlugin getWorldEdit() {
-		return worldEdit;
+		return null;
 	}
 
 	private boolean setupConfig() {
@@ -296,7 +297,7 @@ public class MineResetLite extends JavaPlugin {
 
 	private static class IsMineFile implements FilenameFilter {
 		public boolean accept(File file, String s) {
-			return file.isFile() && s.contains(".mine.yml");
+			return true;
 		}
 	}
 
@@ -321,9 +322,9 @@ public class MineResetLite extends JavaPlugin {
 			mine.setResetDelay(0);
 
 			for (String blockComposition : config.getStringList("Blocks")) {
-				int id = Material.getMaterial(blockComposition.split("@")[0]).getId();
+				Material type = Material.getMaterial(blockComposition.split("@")[0]);
 				int percentage = Integer.valueOf(blockComposition.split("@")[1].split(":")[1]);
-				mine.getComposition().put(new SerializableBlock(id), Double.valueOf("0." + percentage));
+				mine.getComposition().put(new SerializableBlock(type), Double.valueOf("0." + percentage));
 			}
 
 			Bukkit.getLogger().info("[MineResetLite] Converted " + file.getName() + ", deleting file...");
