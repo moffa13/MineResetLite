@@ -21,8 +21,8 @@ import com.koletar.jj.mineresetlite.Mine;
 import com.koletar.jj.mineresetlite.MineResetLite;
 import com.koletar.jj.mineresetlite.SerializableBlock;
 import com.koletar.jj.mineresetlite.StringTools;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldedit.bukkit.selections.Selection;
+//import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+//import com.sk89q.worldedit.bukkit.selections.Selection;
 
 /**
  * @author jjkoletar
@@ -110,13 +110,13 @@ public class MineCommands {
 			p2 = point2.get(player).toVector();
 		}
 		// WorldEdit?
-		if (plugin.hasWorldEdit() && plugin.getWorldEdit().getSelection(player) != null) {
-			WorldEditPlugin worldEdit = plugin.getWorldEdit();
-			Selection selection = worldEdit.getSelection(player);
-			world = selection.getWorld();
-			p1 = selection.getMinimumPoint().toVector();
-			p2 = selection.getMaximumPoint().toVector();
-		}
+//		if (plugin.hasWorldEdit() && plugin.getWorldEdit().getSelection(player) != null) {
+//			WorldEditPlugin worldEdit = plugin.getWorldEdit();
+//			Selection selection = worldEdit.getSelection(player);
+//			world = selection.getWorld();
+//			p1 = selection.getMinimumPoint().toVector();
+//			p2 = selection.getMaximumPoint().toVector();
+//		}
 		if (p1 == null) {
 			player.sendMessage(phrase("emptySelection"));
 			return;
@@ -175,13 +175,13 @@ public class MineCommands {
 			p2 = point2.get(player).toVector();
 		}
 		// WorldEdit?
-		if (plugin.hasWorldEdit() && plugin.getWorldEdit().getSelection(player) != null) {
-			WorldEditPlugin worldEdit = plugin.getWorldEdit();
-			Selection selection = worldEdit.getSelection(player);
-			world = selection.getWorld();
-			p1 = selection.getMinimumPoint().toVector();
-			p2 = selection.getMaximumPoint().toVector();
-		}
+//		if (plugin.hasWorldEdit() && plugin.getWorldEdit().getSelection(player) != null) {
+//			WorldEditPlugin worldEdit = plugin.getWorldEdit();
+//			Selection selection = worldEdit.getSelection(player);
+//			world = selection.getWorld();
+//			p1 = selection.getMinimumPoint().toVector();
+//			p2 = selection.getMaximumPoint().toVector();
+//		}
 		if (p1 == null) {
 			player.sendMessage(phrase("emptySelection"));
 			return;
