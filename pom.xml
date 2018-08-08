@@ -6,7 +6,7 @@
 
 	<groupId>xyz.boomclaw.plugins</groupId>
 	<artifactId>mineresetlite</artifactId>
-	<version>0.4.8</version>
+	<version>Reremake-1.0.0</version>
 	<name>MineResetLite</name>
 
 	<repositories>
@@ -53,6 +53,12 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 	</build>
 
 </project>
