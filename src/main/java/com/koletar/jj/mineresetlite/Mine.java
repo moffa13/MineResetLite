@@ -16,7 +16,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 /**
  * @author jjkoletar
@@ -80,6 +79,7 @@ public class Mine implements ConfigurationSerializable {
 			throw new IllegalArgumentException("World was null!");
 		}
 		try {
+			@SuppressWarnings("unchecked")
 			Map<String, Double> sComposition = (Map<String, Double>) me.get("composition");
 			composition = new HashMap<SerializableBlock, Double>();
 			for (Map.Entry<String, Double> entry : sComposition.entrySet()) {
@@ -90,6 +90,7 @@ public class Mine implements ConfigurationSerializable {
 		}
 		name = (String) me.get("name");
 		resetDelay = (Integer) me.get("resetDelay");
+		@SuppressWarnings("unchecked")
 		List<String> warnings = (List<String>) me.get("resetWarnings");
 		resetWarnings = new LinkedList<Integer>();
 		for (String warning : warnings) {

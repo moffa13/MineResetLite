@@ -30,7 +30,7 @@ public class MineResetLite extends JavaPlugin {
 	public List<Mine> mines;
 	private Logger logger;
 	private CommandManager commandManager;
-	private WorldEditPlugin worldEdit = null;
+	//private WorldEditPlugin worldEdit = null;
 	private int saveTaskId = -1;
 	private int resetTaskId = -1;
 

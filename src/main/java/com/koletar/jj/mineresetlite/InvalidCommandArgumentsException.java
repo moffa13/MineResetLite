@@ -1,9 +1,6 @@
 package com.koletar.jj.mineresetlite;
 
-/**
- * Thrown when a command's arguments were unsatisfactory.
- *
- * @author jjkoletar
- */
+@SuppressWarnings("serial")
 public class InvalidCommandArgumentsException extends Exception {
+
 }

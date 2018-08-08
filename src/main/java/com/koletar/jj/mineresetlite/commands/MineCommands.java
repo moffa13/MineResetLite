@@ -316,10 +316,8 @@ public class MineCommands {
 			sender.sendMessage(phrase("notABlock"));
 			return;
 		}
-		byte data = 0;
 		if (bits.length == 2) {
 			try {
-				data = Byte.valueOf(bits[1]);
 			} catch (NumberFormatException nfe) {
 				sender.sendMessage(phrase("unknownBlock"));
 				return;
@@ -394,10 +392,8 @@ public class MineCommands {
 			sender.sendMessage(phrase("notABlock"));
 			return;
 		}
-		byte data = 0;
 		if (bits.length == 2) {
 			try {
-				data = Byte.valueOf(bits[1]);
 			} catch (NumberFormatException nfe) {
 				sender.sendMessage(phrase("unknownBlock"));
 				return;
@@ -527,10 +523,8 @@ public class MineCommands {
 				sender.sendMessage(phrase("notABlock"));
 				return;
 			}
-			byte data = 0;
 			if (bits.length == 2) {
 				try {
-					data = Byte.valueOf(bits[1]);
 				} catch (NumberFormatException nfe) {
 					sender.sendMessage(phrase("unknownBlock"));
 					return;
