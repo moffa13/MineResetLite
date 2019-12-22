@@ -86,7 +86,7 @@ public class Mine implements ConfigurationSerializable {
 				composition.put(new SerializableBlock(entry.getKey()), entry.getValue());
 			}
 		} catch (Throwable t) {
-			throw new IllegalArgumentException("Error deserializing composition");
+			throw new IllegalArgumentException("Error deserializing composition " + t.getMessage());
 		}
 		name = (String) me.get("name");
 		resetDelay = (Integer) me.get("resetDelay");
@@ -102,7 +102,11 @@ public class Mine implements ConfigurationSerializable {
 		}
 		if (me.containsKey("surface")) {
 			if (!me.get("surface").equals("")) {
-				surface = new SerializableBlock((String) me.get("surface"));
+				try {
+					surface = new SerializableBlock((String) me.get("surface"));
+				} catch (Throwable t) {
+					throw new IllegalArgumentException("Error deserializing composition " + t.getMessage());
+				}
 			}
 		}
 		if (me.containsKey("fillMode")) {
@@ -352,7 +356,7 @@ public class Mine implements ConfigurationSerializable {
 						double r = rand.nextDouble();
 						for (CompositionEntry ce : probabilityMap) {
 							if (r <= ce.getChance()) {
-								world.getBlockAt(x, y, z).setType(ce.getBlock().getBlockType());;
+								world.getBlockAt(x, y, z).setType(ce.getBlock().getBlockType());
 								break;
 							}
 						}

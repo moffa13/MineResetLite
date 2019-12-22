@@ -2,6 +2,8 @@ package com.koletar.jj.mineresetlite;
 
 import org.bukkit.Material;
 
+import com.sk89q.worldedit.InvalidItemException;
+
 /**
  * @author jjkoletar
  */
@@ -14,8 +16,11 @@ public class SerializableBlock {
 	}
 
 
-	public SerializableBlock(String self) {
-			blockType = Material.matchMaterial(self);
+	public SerializableBlock(String self) throws Exception {
+		if(Material.matchMaterial(self) == null) {
+			throw new Exception("Invalid item specified (" + self + ")");
+		}
+		blockType = Material.matchMaterial(self);
 	}
 
 	public Material getBlockType() {
